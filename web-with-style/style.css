@@ -1,0 +1,38 @@
+body{
+
+background-color: beige;
+}
+
+
+/* to style and element, I first name the element, then 
+write style inside the {....} */
+
+h2 {
+    /* style consist if an attribute value pair */
+    color: green
+}
+
+img{
+width: 300px
+
+}
+
+p{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+}
+
+.firstCapyCaption{
+
+    color:brown
+}
+
+.secondCapyCaption{
+
+    color: rgb(25, 90, 25)
+}
+
+.lilashighlight{
+
+    color: blueviolet;
+}
