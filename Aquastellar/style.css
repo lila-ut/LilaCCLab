@@ -1,0 +1,31 @@
+html, body {
+  background-color: rgb(61, 123, 173);
+    margin: 0;
+    padding: 0;
+  }
+
+  h2 {
+  
+    font-family: fantasy;
+    font-size: 50px;
+    font-weight: 300;
+    color: rgb(192, 224, 255)
+    
+  
+    
+}
+  
+  #canvasWrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(50%, 50%);
+  }
+
+  p{
+    
+    font-family: fantasy; 
+    font-weight: 100;
+    font-size: 20px;
+    
+}
