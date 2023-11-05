@@ -1,170 +1,92 @@
-let colors = [];
-let numColors = 20;
-let angle1 = 0;
-let angle2 = Math.PI; //
-let amplitude = 100;
-let scene = 1;
-let starSize = 30; // the initial star size
-let growing = false; // control star growth
-let stars = [];
+// CCLab Mini Project - 9.R Particles Template
 
+let NUM_OF_PARTICLES = 200;
+let particles = [];
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  
-  x = width / 2;
-  y = height / 2;
-  
-   for (let i = 0; i < numColors; i++) {
-    let inter = map(i, 0, numColors - 1, 0, 1);
-    let gradient = lerpColor(color(0, 51, 102), color(0, 102, 204), inter);
-    colors.push(gradient);
-   }
- 
+  createCanvas(500, 400);
+  for (let i = 0; i < NUM_OF_PARTICLES; i++) {
+    particles.push(new Particle(random(width), random(height)));
+  }
 }
 
 function draw() {
-
-   drawHorizontalGradient(0, 0, width, height, colors);
-  // This shows the star positions based on sine and cosine
-  
-  if (scene === 1) {
-  let x1 = width / 2 + amplitude * cos(angle1);
-  let y1 = height / 4 + amplitude * sin(angle1);
-  let x2 = width / 2 + amplitude * cos(angle2);
-  let y2 = (3 * height) / 4 + amplitude * sin(angle2);
-
-  push()
-  fill("yellow")
-  // Draing the stars
-  drawStar(x1, y1, 20, 70, 5); //
-  pop();
-  
-  push()
-  fill("orange")
-  drawStar(x2, y2, 20, 70, 5); //
-  pop()
-
-  // Increment angles based on the mouse's horizontal position
-  angle1 += map(mouseX, 0, width, 0.02, 0.1);
-  angle2 += map(mouseX, 0, width, 0.02, 0.1);
-    
-  } else if (scene === 2) {
-    let secondstarangle = millis() * 0.001; // Adjust the speed of bumping
-    secondstarx = width / 2 + amplitude * cos(secondstarangle);
-    secondstary = height / 2 + amplitude * sin(secondstarangle);
-
-    push()
-    
-    stroke("blue")
-    strokeWeight(1)
-    fill(255)
-    // the star
-    // Draw the single star in the center with bumping effect
-    drawStar(x, y, starSize, starSize * 2, 8)
-    drawStar(x-30, y+20, starSize, starSize * 2.5, 8)
-    drawStar(x-60, y+40, starSize, starSize * 2, 8)
-    drawStar(x-70, y+50, starSize, starSize * 2, 8)
-    // drawStar(x, y, 15, 30, 8); 
-    // drawStar(x, y, 15, 30, 15); 
-    // Add bumping effect 
-    x += random(-1, 1);
-    y += random(-1, 1);
-    pop()
-  }
-
-   if (growing) {
-    starSize += 1; // Increase star size when 'g' is pressed
-  }
-   // Draw  random stars
-  for (let star of stars) {
-    star.angle += star.speed * 0.01;
-    let sx = x + cos(star.angle) * star.radius2;
-    let sy = y + sin(star.angle) * star.radius2;
-    drawStar(sx, sy, star.radius1, star.radius2, star.points);
-  }
-}
-function mouseClicked() {
-  if (scene === 1) {
-    // scene 2
-    scene = 2;
-  }
-}
-function drawStar(x, y, radius1, radius2, numberof_points) {
-  let angle = TWO_PI / numberof_points;
-  let halfAngle = angle / 2.0;
-  beginShape();
-  for (let a = -PI / 2; a < TWO_PI - PI / 3; a += angle) {
-    let outerx = x + cos(a) * radius2;
-    let outery = y + sin(a) * radius2;
-    vertex(outerx, outery);
-    innerx = x + cos(a + halfAngle) * radius1;
-    innery = y + sin(a + halfAngle) * radius1;
-    vertex(innerx, innery);
-   
+  background(25, 25, 112); 
+ for (let i = 0; i < particles.length; i++) {
+    particles[i].sway();
+    particles[i].fall();
+    particles[i].display();
+    particles[i].reappear();
   }
   
-  endShape(CLOSE);
+  // Drawung snow at the bottom of the canvas
+  fill(255); // White color for the snow
+  noStroke();
+  rect(0, height - 50, width, 50);
   
+  // Drawing a house on the snow
+  drawHouse();
+}
 
-}
-function keyPressed() {
-  if (key === '1') {
-    // Scene 1: Display a single star
-    scene = 1;
-    starSize = 30; // Reset star size
-  } else if (key === '2') {
-    // Scene 2: Bumping star
-    scene = 2;
-    x = width / 2;
-    y = height / 2;
-    starSize = 30; // Reset star size
-   } else if (key === 'g') {
-    // Start star growth when 'g' key is pressed
-    growing = true;
-  } else if (key === 's') {
-    // Add a random star when 's' key is pressed
-    let newStar = {
-      radius1: random(10, 30),
-      radius2: random(10, 30),
-      points: floor(random(10, 30)),
-      angle: random(TWO_PI),
-      speed: random(4, 8),
-    };
-    stars.push(newStar);
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.ySpd = random(1, 3);
+    this.size = random(3, 6);
+    this.noiseOffsetX = random(0, 1000);
+    this.noiseOffsetY = random(0, 1000);
+  }
+
+  sway() {
+    // Using noise to sway to the sides
+    let swaySize = map(noise(this.noiseOffsetX), 0, 1, -1, 1);
+    this.x += swaySize;
+    this.noiseOffsetX += 0.04; // 
+  }
+
+  fall() {
+    // Falling from the top
+    this.y += this.ySpd + 0.2;
+  }
+
+  display() {
+    stroke(255);
+    strokeWeight(this.size * 0.2);
+    // snowflake using lines
+    push();
+    translate(this.x, this.y);
+    line(0, -this.size, 0, this.size);
+    line(-this.size, 0, this.size, 0);
+    line(-this.size / 1.5, -this.size / 1.5, this.size / 1.5, this.size / 1.5);
+    line(-this.size / 1.5, this.size / 1.5, this.size / 1.5, -this.size / 1.5);
+    pop();
+  }
+
+  reappear() {
+    if (this.y > height) {
+      this.y = -this.size;
+      this.x = random(width);
+    }
   }
 }
-function drawStar(x, y, radius1, radius2, npoints) {
-  beginShape();
-  let angleIncrement = TWO_PI / npoints;
-  for (let angle = -PI / 2; angle < TWO_PI - PI / 2; angle += angleIncrement) {
-    let starsx = x + cos(angle) * radius2+2;
-    let starsy = y + sin(angle) * radius2+2;
-    vertex(starsx, starsy);
-    starsx = x + cos(angle + angleIncrement / 2) * radius1;
-    starsy = y + sin(angle + angleIncrement / 2) * radius1;
-    vertex(starsx, starsy);
-  }
-  endShape(CLOSE);
-}
-function keyReleased() {
-  if (key === 'g') {
-    // Stop star growth when]key is released
-    growing = false;
-  }
-}
-function drawHorizontalGradient(x, y, w, h, colorArray) {
-  let gradientHeight = h / colorArray.length;
-  noStroke(); 
-  for (let i = 0; i < colorArray.length; i++) {
-    fill(colorArray[i]);
-    rect(x, y + i * gradientHeight, w, gradientHeight);
-  }
-  push()
-  textSize(10);
-  fill(255);
-text('Click mouse when the stars are alligned to see what happens when they morph together!', 10, 30);
-  text('Press g to watch it grow!', 10, 50);
-  text('Press s to reproduce!', 10, 70);
-pop()
+
+function drawHouse() {
+  //House
+  fill(139,69,19);
+  rect(width * 0.5 - 50, height - 120, 100, 70);
+  
+  //Roof 
+  fill(205,133,63);
+  triangle(width * 0.5 - 60, height - 120, width * 0.5 + 60, height - 120, width * 0.5, height - 180);
+  
+  //Door =
+  fill(205,133,63);
+  rect(width * 0.5 - 15, height - 90, 30, 40);
+  
+  //Chimney
+  fill(205,133,63);
+  rect(width * 0.5 + 20, height - 180, 10, 40);
+
+  
 }
