@@ -1,0 +1,32 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  .wall {
+    background-image: url('artgeller.jpg');
+    background-size: cover;
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 50px;
+    height: calc(100% - 100px); /* Subtract top and bottom padding from 100% height */
+  }
+  
+  .poster, .picture1 {
+    width: 400px;
+    height: 400px;
+    margin: 80px; /* Make sure both have the same margin */
+    background-color: white;
+    box-shadow: 3px 3px 10px rgba(38, 32, 32, 0.5);
+  }
+  
+  .picture1 {
+    background-image: url('hotel.jpg');
+    background-size: cover; /* To cover the div with the image */
+    margin: 80px; /* Added px to make it valid */
+  }
+
+  
