@@ -1,0 +1,21 @@
+body {
+    background-image: url('images/Budapest.png'); 
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Set the body to be 100% of the viewport height */
+}
+
+#canvasWrapper {
+    
+    width: 800px; /* Width of the canvas */
+    height: 600px; /* Height of the canvas */
+}
+
+
+  
