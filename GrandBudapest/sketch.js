@@ -1,5 +1,6 @@
 console.log("js is linked!");
-let currentScene = 1;
+let currentScene = 1
+;
 let startButton;
 let escalatorX, escalatorY;
 
@@ -33,6 +34,8 @@ let truckX = 700, truckY = 300, truckWidth = 300, truckHeight = 280;
 let replayButton;
 let backButton;
 
+let BgSound;
+
 function preload() {
     hotelImage = loadImage("images/hotel.png");
     suitcaseImage = loadImage("images/luggage.png");
@@ -44,6 +47,9 @@ function preload() {
     menImage = loadImage("images/men.png")
     paintingImage = loadImage("images/painting.jpg")
     bgImage = loadImage("images/room.jpg")
+
+    BgSound = loadSound("sounds/BgMusic.mp3")
+
    
 }
 
@@ -99,11 +105,12 @@ function setup() {
 
     startButton = createButton('Start');
     let buttonY = height / 2 + 200;
-    startButton.position(width / 2 + 280, buttonY);
+    startButton.position(width / 2 , buttonY);
     startButton.mousePressed(() => {
-        currentScene = 2; // 
-        startButton.hide(); //disapear
-    });
+            currentScene = 2; 
+            BgSound.loop(); // start playing 
+            startButton.hide(); // disappear agter scene 1
+        });
 
     // desk area for suitcase chekin in
     deskArea = { x: width * 0.5, y: height * 0.65, radius: 100 };
@@ -124,11 +131,22 @@ function setup() {
     // replay button
     replayButton = createButton('Replay');
     replayButton.position(width / 2 - replayButton.width / 2, height / 2 + 230);
-    replayButton.mousePressed(restartGame); // restartGame function when its clicked
+    replayButton.mousePressed(restartGame); // restarts the game when its clicked
 
     backButton = createButton('Back');
     backButton.position(width / 2-380, height +10);
     backButton.mousePressed(goToScene6);
+
+    updateButtonPositions();
+
+    //sound test
+    //BgSound.loop();
+}
+
+function windowResized() {
+   
+    resizeCanvas(800, 600);
+    updateButtonPositions();
 }
 
 function draw() {
@@ -138,10 +156,6 @@ function draw() {
     } else if (currentScene === 2) {
         sceneTwo();
     } else if (currentScene === 3) {
-        sceneThree();
-    }
-
-    if (currentScene === 3) {
         sceneThree();
     }
 
@@ -176,17 +190,12 @@ function draw() {
         sceneEight();
     }
     if (currentScene === 7 || currentScene === 8) {
-        // Display replay button in Scene 7 and Scene 8
         replayButton.show();
-} else {
-    replayButton.hide();
-}
-if (currentScene === 7 || currentScene === 8) {
-    // Display back button in Scene 7 and Scene 8
-    backButton.show();
-} else {
-    backButton.hide();
-}
+        backButton.show();
+    } else {
+        replayButton.hide();
+        backButton.hide();
+    }
 }
 
 function sceneTwo() {
@@ -365,20 +374,37 @@ function displayreceptionistImage() {
     image(receptionistImage, receptionistimgX + 182, receptionistimgY + 182, receptionistimgWidth + 60, receptionistimgHeight - 7);
 }
 
-
 function mousePressed() {
-
-    if (currentScene === 5) {
-        // Check if the mouse is inside any of the boxes
-        for (let box of boxes) {
-            box.checkIfInside(mouseX, mouseY);
+        // Check for interactions ONLY ON Scene 5
+        if (currentScene === 5) {
+            for (let box of boxes) {
+                box.checkIfInside(mouseX, mouseY);
+            }
+        } else {
+            // Check if the mouse istoucihgn the suitcases
+            for (let suitcase of suitcases) {
+                suitcase.checkIfInside(mouseX, mouseY);
+            }
+        }
+    
+        // Check for canvas click to control sound
+       
+        // if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+        //     // Play or pause the sound when the canvas is clicked
+        //     if (BgSound.isPlaying()) {
+        //         BgSound.pause();
+        //     } else {
+        //         BgSound.loop();
+        //     }
+        // }
+        if (currentScene === 1) {
+            if (BgSound.isPlaying()) {
+                BgSound.pause();
+            } else {
+                BgSound.loop();
+            }
         }
     }
-    // Check if the mouse is inside any of the suitcase
-    for (let suitcase of suitcases) {
-        suitcase.checkIfInside(mouseX, mouseY);
-    }
-}
 
 function mouseDragged() {
     // dragging mouse = move the suitase
@@ -473,13 +499,13 @@ function drawElevatorFloorKeyPanel() {
 
 
 function mouseWheel(event) {
-    // Apply the logic only when in scene 4
+    // Applyy ONLY IN SCENE 4
     if (currentScene === 4) {
-        // Update elevator position based on scroll direction
+        // elevator pistion changes with scroll direction
         elevatorY += event.delta;
     }
 
-    // If not in scene 4, or the condition is not met, do nothing
+    // If not scene 4 retirn to notmel function
     return false;
 }
 
@@ -549,7 +575,8 @@ function sceneFive() {
         box.display();
     }
 
-    // Check if 5 boxes have been moved to go to the next scene
+    // Check if 5 boxes have been moved 
+    //to the truck to go to the next scene
     if (boxesPopped >= 5) {
         currentScene = 6;
     }
@@ -561,31 +588,31 @@ function sceneFive() {
  let truckHeight = 280;
 
  // truck
- fill('#df7176'); // Dark grey color for the truck
+ fill('#df7176'); 
  rect(truckX, truckY, truckWidth, truckHeight);
 
  // wheels
- fill('#292237'); // Black color for the wheels
- ellipse(truckX + 40, truckY + truckHeight, 50, 50); // Front wheel (only one visible)
+ fill('#292237'); 
+ ellipse(truckX + 40, truckY + truckHeight, 50, 50); 
 
  // back door
- fill('#292237'); // Darker shade for the door
- rect(truckX + 5, truckY + 20, 70, 60); // Open door part attached to the truck
+ fill('#292237'); 
+ rect(truckX + 5, truckY + 20, 70, 60); 
  rect(truckX - 65, truckY + 20, 70, 60); 
 }
 
-function mousePressed() {
-    if (currentScene === 5) {
-        for (let box of boxes) {
-            box.checkIfInside(mouseX, mouseY);
-        }
-    } else {
-        // Check if the mouse is inside any of the suitcases
-        for (let suitcase of suitcases) {
-            suitcase.checkIfInside(mouseX, mouseY);
-        }
-    }
-}
+// function mousePressed() {
+//     if (currentScene === 5) {
+//         for (let box of boxes) {
+//             box.checkIfInside(mouseX, mouseY);
+//         }
+//     } else {
+//         // Check if the mouse is inside any of the suitcases
+//         for (let suitcase of suitcases) {
+//             suitcase.checkIfInside(mouseX, mouseY);
+//         }
+//     }
+//}
 
 
 function sceneSix() {
@@ -704,28 +731,42 @@ function sceneEight() {
     text("YOU HAVE ARRIVED IN YOUR ROOM, HAVE A GOOD NIGHT", width / 2, 330);
   }
   function restartGame() {
-    // Reset variables and transition to Scene 1
-    currentScene = 1;
-    suitcases = []; // Clear any suitcases that might have been left
+    currentScene = 1; // Reset to the first scene
+
+    // Reset the suitcase array
+    suitcases = [];
     for (let i = 0; i < 5; i++) {
         suitcases.push(new Suitcase(60 + i * 110, height - 80, 100, 50, suitcaseImage));
     }
-    // You may need to reset other variables here if necessary
-}
-function restartGame() {
-    // Reset variables and transition to Scene 1
-    currentScene = 1;
-    suitcases = []; // Clear any suitcases that might have been left
-    for (let i = 0; i < 5; i++) {
-        suitcases.push(new Suitcase(60 + i * 110, height - 80, 100, 50, suitcaseImage));
+// reset the elevator heihgt
+    elevatorY = -elevatorHeight / 2;
+    boxes = [];
+    boxesPopped = 0;
+    for (let i = 0; i < 20; i++) {
+        boxes.push(new Box(random(width), random(height), 50, 50));
     }
-    startButton.show(); // Show the "Start" button
-    // You may need to reset other variables here if necessary
+
+    startButton.show();
 }
+
 
 function goToScene6() {
     currentScene = 6; // back to Scene 6
 }
+
+function updateButtonPositions() {
+    // new positions based on canvas 
+    let canvasBounds = document.getElementById("canvasWrapper").getBoundingClientRect();
+
+    // Adjust positions
+    startButton.position(canvasBounds.left + (width / 2) -30, canvasBounds.top + (height / 2) + 200);
+    replayButton.position(canvasBounds.left + (width / 2) - (replayButton.width / 2), canvasBounds.top + (height / 2) + 200);
+    backButton.position(canvasBounds.left + (width / 2) - 380, canvasBounds.top + height + 10);
+}
+
+
+
+
 
 
 
